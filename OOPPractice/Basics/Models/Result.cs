@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Basics
+namespace Basics.Models
 {
     public class Result
     {
@@ -10,12 +10,14 @@ namespace Basics
         public double chemistry;
         public double biology;
 
+        int numberOfSubjects = 3;
+        int passingAverage = 80;
         public double GetAverage() {
-            return (physics + chemistry + biology) / 3;
+            return (physics + chemistry + biology) / numberOfSubjects;
         }
         public string GetPassOrFail()
         {
-            if (GetAverage() >= 80)
+            if (GetAverage() >= passingAverage)
             {
                 return "Pass";
             }

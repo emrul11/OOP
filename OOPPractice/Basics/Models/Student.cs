@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Basics
+namespace Basics.Models
 {
     public class Student
     {

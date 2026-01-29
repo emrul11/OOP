@@ -21,9 +21,9 @@ while (true)
         case "2":
             ShowAllStudents();
             break;
-        case "3":
+        case "0":
             Console.WriteLine("Exiting Application...");
-            break;
+            return;
         default:
             Console.WriteLine("Invalid Choice.");
             break;
@@ -62,6 +62,13 @@ void AddStudent()
 void ShowAllStudents()
 {
     List<Student> students = new List<Student>(); 
+    students = _repository.GetAll();
+
+    foreach (Student student in students)
+    {
+        DisplayStudent(student);
+        Console.WriteLine("____________________");
+    }
 }
     
 static Student CreateStudentFromInput() { 
@@ -94,7 +101,7 @@ static Student CreateStudentFromInput() {
     return student;
 }
 
-static void DisplayStudent(Student s)
+void DisplayStudent(Student s)
 {
     Console.WriteLine($"Name: {s.name}");
     Console.WriteLine($"Email: {s.email}");

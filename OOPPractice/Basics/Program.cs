@@ -1,29 +1,67 @@
 ﻿using Basics.Models;
+using Basics.Repository;
+using Basics.Validation;
 
 
-Console.WriteLine("1. Add Student");
-Console.WriteLine("2. Show All Students");
-Console.Write("Choose option: ");
-int choice = int.Parse(Console.ReadLine());
+StudentRepository _repository = new StudentRepository();
+ 
+StudentValidator _validation = new StudentValidator();
 
-if (choice == 1)
+while (true)
+{
+    ShowMenu();
+    string choice = Console.ReadLine();
+    Console.WriteLine();
+
+    switch (choice)
+    {
+        case "1":
+            AddStudent();
+            break;
+        case "2":
+            ShowAllStudents();
+            break;
+        case "3":
+            Console.WriteLine("Exiting Application...");
+            break;
+        default:
+            Console.WriteLine("Invalid Choice.");
+            break;
+
+    }
+}
+
+
+static void ShowMenu()
+{
+    Console.WriteLine("===== Student Management =====");
+    Console.WriteLine("1. Add Student");
+    Console.WriteLine("2. Show All Student");
+    Console.WriteLine("0. Exit");
+    Console.Write("Choose Options: ");
+}
+
+void AddStudent()
 {
     Student student = CreateStudentFromInput();
-    //repository.Save(student);
-    Console.WriteLine("Student saved successfully.");
+
+    ValidationResult result = _validation.Validate(student);
+
+    if (!result.IsValid)
+    {
+        Console.WriteLine("\nValidation Errors:");
+        foreach (string error in result.Errors)
+            Console.WriteLine("- "+ error);
+        return;
+    }
+
+    _repository.Add(student);
+    Console.WriteLine("Student Saved Successfully\n\n");
 }
-else if (choice == 2)
+
+void ShowAllStudents()
 {
-   // List<Student> students = repository.GetAllStudents();
-    //foreach (Student student in students)
-    //{
-    //    DisplayStudentInfo(student);
-    //    Console.WriteLine("----------------------------");
-    //}
-}
-else
-{
-    Console.WriteLine("Invalid choice");
+    List<Student> students = new List<Student>(); 
 }
     
 static Student CreateStudentFromInput() { 
@@ -47,30 +85,21 @@ static Student CreateStudentFromInput() {
     Console.Write("Physics:");
     student.result.physics = double.Parse( Console.ReadLine());
 
-    Console.Write("Chemistry");
+    Console.Write("Chemistry:");
     student.result.chemistry = double.Parse( Console.ReadLine());
 
-    Console.Write("Biology");
+    Console.Write("Biology:");
     student.result.biology = double.Parse( Console.ReadLine());
-
-    
 
     return student;
 }
-   
-void DisplayStudentInfo(Student student) { 
-    Console.WriteLine("Name: " +student.name);
-    Console.WriteLine("Email: " +student.email); 
-    Console.WriteLine("Contact Number: " + student.contactNumber);
-    Console.WriteLine("Physics: " + student.result.physics);
-    Console.WriteLine("Chemistry: " + student.result.chemistry);
-    Console.WriteLine("Biology: " + student.result.biology);
-    Console.WriteLine("Average: " + student.result.GetAverage());
-    Console.WriteLine("Result: " + student.result.GetPassOrFail());
+
+static void DisplayStudent(Student s)
+{
+    Console.WriteLine($"Name: {s.name}");
+    Console.WriteLine($"Email: {s.email}");
+    Console.WriteLine($"Contact: {s.contactNumber}");
+    Console.WriteLine($"Average: {s.result.GetAverage()}");
+    Console.WriteLine($"Result: {s.result.GetPassOrFail()}");
 }
-
-
-//DisplayStudentInfo(student1 );
-//Console.WriteLine("_________________________\n");
-//DisplayStudentInfo(student2);
 

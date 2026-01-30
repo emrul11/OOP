@@ -89,17 +89,27 @@ static Student CreateStudentFromInput() {
     
     student.result = result;
 
-    Console.Write("Physics:");
-    student.result.physics = double.Parse( Console.ReadLine());
 
-    Console.Write("Chemistry:");
-    student.result.chemistry = double.Parse( Console.ReadLine());
-
-    Console.Write("Biology:");
-    student.result.biology = double.Parse( Console.ReadLine());
+    student.result.physics = ReadMark("Physics");
+    student.result.chemistry = ReadMark("Chemistry");
+    student.result.biology = ReadMark("Biology");
 
     return student;
 }
+
+static double ReadMark(string subject)
+{
+    while (true)
+    {
+        Console.Write($"{subject}: ");
+        if (double.TryParse(Console.ReadLine(), out double mark) &&
+            mark >= 0 && mark <= 100)
+            return mark;
+
+        Console.WriteLine($"{subject} must be a number between 0 and 100.");
+    }
+}
+
 
 void DisplayStudent(Student s)
 {

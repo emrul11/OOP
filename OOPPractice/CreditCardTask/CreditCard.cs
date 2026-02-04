@@ -6,28 +6,36 @@ namespace CreditCardTask
 {
     public class CreditCard
     {
-        private const decimal DefaultCreditLimit = 500000;
-        private const decimal DefaultCashWithdrawalLimit = 50000;
+        private const decimal DefaultCreditLimit = 500_000m;
+        private const decimal DefaultCashWithdrawalLimit = 50_000m;
 
-        public string CardNumber { get; set; }
-        public string CardHolderName { get; set; }
-        public string BankName { get; set; }
+        public string CardNumber { get; }
+        public string CardHolderName { get; }
+        public string BankName { get; }
 
-        public decimal CreditLimit {  get; set; }
-        public decimal CashWithdrawalLimit { get; set; }
+        public decimal CreditLimit { get; }
+        public decimal CashWithdrawalLimit { get; }
 
-        public decimal OutstandingBalance { get; set; }
+        public decimal OutstandingBalance { get; private set; }
+        public decimal CreditBalance { get; private set; }
 
+        public decimal AvailableCredit =>
+            CreditLimit - OutstandingBalance + CreditBalance;
 
         public CreditCard(string cardNumber, string cardHolderName, string bankName)
         {
+            if (string.IsNullOrWhiteSpace(cardNumber))
+                throw new ArgumentException("Card number is required.");
+
+            if (string.IsNullOrWhiteSpace(cardHolderName))
+                throw new ArgumentException("Card holder name is required.");
+
             CardNumber = cardNumber;
             CardHolderName = cardHolderName;
             BankName = bankName;
 
             CreditLimit = DefaultCreditLimit;
             CashWithdrawalLimit = DefaultCashWithdrawalLimit;
-            OutstandingBalance = 0;
         }
 
         public void WithdrawCash(decimal amount)
@@ -40,7 +48,7 @@ namespace CreditCardTask
 
             EnsureCreditLimitNotExceeded(amount);
 
-            OutstandingBalance += amount;
+            ApplyCharge(amount);
         }
 
         public void PayBill(decimal amount, string merchantName)
@@ -52,20 +60,40 @@ namespace CreditCardTask
 
             EnsureCreditLimitNotExceeded(amount);
 
-            OutstandingBalance += amount;
+            ApplyCharge(amount);
         }
+
         public void Repay(decimal amount)
         {
             ValidateAmount(amount);
 
-            OutstandingBalance -= amount;
+            if (amount >= OutstandingBalance)
+            {
+                CreditBalance += amount - OutstandingBalance;
+                OutstandingBalance = 0;
+            }
+            else
+            {
+                OutstandingBalance -= amount;
+            }
         }
 
+        private void ApplyCharge(decimal amount)
+        {
+            if (CreditBalance > 0)
+            {
+                var adjusted = Math.Min(CreditBalance, amount);
+                CreditBalance -= adjusted;
+                amount -= adjusted;
+            }
+
+            OutstandingBalance += amount;
+        }
 
         private void ValidateAmount(decimal amount)
         {
             if (amount <= 0)
-                throw new ArgumentException("Amount must be greater than zero.");
+                throw new ArgumentOutOfRangeException(nameof(amount));
         }
 
         private void EnsureCreditLimitNotExceeded(decimal amount)
@@ -73,6 +101,6 @@ namespace CreditCardTask
             if (OutstandingBalance + amount > CreditLimit)
                 throw new InvalidOperationException("Credit limit exceeded.");
         }
-
     }
+
 }

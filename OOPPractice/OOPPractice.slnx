@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="Basics/Basics.csproj" Id="d687a1b6-fd54-4e10-ba20-f152c320026e" />
+  <Project Path="Budget Expense Management/Budget Expense Management.csproj" Id="a40a7e59-0a11-4306-b5a9-6ab88d4f1cac" />
   <Project Path="CreditCardTask/CreditCardTask.csproj" Id="9568d55e-5df9-486a-ba73-41a027cada0a" />
 </Solution>
